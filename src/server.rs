@@ -50,12 +50,12 @@ pub async fn start(
             .cors()
             .trace()
             .build();
+
+        let _ = up_tx.send(());
         server
             .serve()
             .await
             .expect("Unable to run signaling server, is it already running?");
-
-        up_tx.send(());
     });
 
     Ok((up_rx, fin_rx, shutdown_tx))
