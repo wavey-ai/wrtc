@@ -3552,6 +3552,8 @@ checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
 name = "wrtc"
 version = "0.1.0"
 dependencies = [
+ "async-trait",
+ "axum",
  "bytes",
  "console_error_panic_hook",
  "console_log",
@@ -3559,9 +3561,11 @@ dependencies = [
  "futures-timer",
  "js-sys",
  "log",
+ "matchbox_protocol",
  "matchbox_signaling",
  "matchbox_socket",
  "playlists",
+ "serde",
  "tokio",
  "tracing",
  "wasm-bindgen",
