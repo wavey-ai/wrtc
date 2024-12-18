@@ -4,7 +4,7 @@ use futures_timer::Delay;
 use js_sys::Uint8Array;
 use log::info;
 use matchbox_socket::{PeerState, WebRtcSocket};
-use std::sync::Mutex;
+use std::str::FromStr;
 use std::time::Duration;
 use wasm_bindgen::prelude::*;
 use web_sys::Worker;
@@ -22,12 +22,15 @@ impl WebRtcConnection {
     }
 
     #[wasm_bindgen]
-    pub async fn start(&self, cb: &js_sys::Function) -> Result<(), JsValue> {
+    pub async fn start(&self, id: String, cb: &js_sys::Function) -> Result<(), JsValue> {
         let (mut socket, loop_fut) = WebRtcSocket::new_unreliable(self.host.to_string());
         let loop_fut = loop_fut.fuse();
         futures::pin_mut!(loop_fut);
         let timeout = Delay::new(Duration::from_millis(2));
         futures::pin_mut!(timeout);
+
+        let id_bytes = Bytes::from(u64::from_str(&id).unwrap().to_le_bytes().to_vec());
+
         loop {
             // Handle any new peers
             for (peer, state) in socket.update_peers() {
@@ -43,8 +46,7 @@ impl WebRtcConnection {
             // Collect peers first to avoid borrowing conflict
             let connected_peers: Vec<_> = socket.connected_peers().collect();
             for peer in connected_peers {
-                let id = Bytes::from((1234 as u64).to_le_bytes().to_vec());
-                socket.send(id, peer);
+                socket.send(id_bytes.clone(), peer);
             }
 
             // Accept any messages incoming

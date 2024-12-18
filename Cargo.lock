@@ -1517,7 +1517,7 @@ dependencies = [
 [[package]]
 name = "matchbox_protocol"
 version = "0.9.0"
-source = "git+ssh://git@github.com/wavey-ai/matchbox#900d91df55a3b973d8d1dd0e18ad942ecc598474"
+source = "git+ssh://git@github.com/wavey-ai/matchbox#c617c75ed2089f7dbf58f8fb893d52be655e56ab"
 dependencies = [
  "cfg-if",
  "derive_more",
@@ -1528,7 +1528,7 @@ dependencies = [
 [[package]]
 name = "matchbox_socket"
 version = "0.9.0"
-source = "git+ssh://git@github.com/wavey-ai/matchbox#900d91df55a3b973d8d1dd0e18ad942ecc598474"
+source = "git+ssh://git@github.com/wavey-ai/matchbox#c617c75ed2089f7dbf58f8fb893d52be655e56ab"
 dependencies = [
  "async-compat",
  "async-trait",
