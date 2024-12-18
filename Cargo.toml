@@ -4,7 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-matchbox_socket = { git = "ssh://git@github.com/wavey-ai/matchbox.git" }
 futures-timer = { version = "3", features = ["wasm-bindgen"] }
 log = { version = "0.4", default-features = false }
 console_error_panic_hook = "0.1.7"
@@ -14,9 +13,13 @@ wasm-bindgen-futures = "0.4.29"
 web-sys = { version = "0.3.69", features = ["Worker"] }
 wasm-bindgen = "0.2.92"
 js-sys = "0.3.69"
-tokio = "1.37.0"
-au = { path = "../au" }
 bytes = "1.6.0"
+matchbox_socket = { path = "../matchbox/matchbox_socket/" }
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+tokio = { version = "1.42.0", features = ["full"] }
+xmpegts = { git = "ssh://git@github.com/wavey-ai/xiu" }
+playlists = { git = "ssh://git@github.com/wavey-ai/playlists.git" }
 
 [lib]
 crate-type = ["cdylib", "rlib"]

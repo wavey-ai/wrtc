@@ -1,3 +1,4 @@
-.PHONY: build
-build:
-	wasm-pack build --no-default-features --target no-modules --no-typescript --out-dir pkg --debug
+.PHONY: wasm
+wasm:
+	wasm-pack build --target web
+	rm -rf public/pkg && mv pkg public
