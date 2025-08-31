@@ -18,11 +18,11 @@ tracing = "0.1.41"
 matchbox_socket = { git = "ssh://git@github.com/wavey-ai/matchbox" }
 serde = "1.0.216"
 async-trait = "0.1.83"
+playlists = "0.1.1"
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 tokio = { version = "1.42.0", features = ["full"] }
 xmpegts = { git = "ssh://git@github.com/wavey-ai/xiu" }
-playlists = { git = "ssh://git@github.com/wavey-ai/playlists.git" }
 matchbox_signaling = { git = "ssh://git@github.com/wavey-ai/matchbox" }
 axum = "0.7.9"
 matchbox_protocol = { git = "ssh://git@github.com/wavey-ai/matchbox" }
