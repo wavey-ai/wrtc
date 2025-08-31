@@ -213,7 +213,7 @@ async fn get_part(fmp4_cache: Arc<Fmp4Cache>, path: u64, id: usize) -> Option<(B
     let poll_interval = Duration::from_millis(1);
 
     while start_time.elapsed() < timeout {
-        if let Some(data) = fmp4_cache.get(path as usize, id) {
+        if let Some(data) = fmp4_cache.get(path as usize, id).await {
             return Some(data.clone());
         }
         sleep(poll_interval).await;
