@@ -156,7 +156,7 @@ async fn handle_peer_cache(
         }
     };
 
-    let mut last = match fmp4_cache.last(id) {
+    let mut last = match fmp4_cache.last(id as usize) {
         Some(last) => last,
         None => {
             error!("No last position found for peer {}", peer);
@@ -213,7 +213,7 @@ async fn get_part(fmp4_cache: Arc<Fmp4Cache>, path: u64, id: usize) -> Option<(B
     let poll_interval = Duration::from_millis(1);
 
     while start_time.elapsed() < timeout {
-        if let Some(data) = fmp4_cache.get(path, id) {
+        if let Some(data) = fmp4_cache.get(path as usize, id) {
             return Some(data.clone());
         }
         sleep(poll_interval).await;
