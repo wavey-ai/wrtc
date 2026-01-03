@@ -3,7 +3,7 @@ use futures::{pin_mut, select, FutureExt};
 use futures_timer::Delay;
 use log::{error, info};
 use matchbox_socket::{PeerId, PeerState, WebRtcSocket};
-use playlists::fmp4_cache::Fmp4Cache;
+use playlists::chunk_cache::ChunkCache;
 use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
@@ -27,7 +27,7 @@ struct PeerContext {
 
 pub async fn start(
     port: u16,
-    fmp4_cache: Arc<Fmp4Cache>,
+    chunk_cache: Arc<ChunkCache>,
 ) -> Result<
     (
         oneshot::Receiver<()>,
@@ -94,7 +94,7 @@ pub async fn start(
                     if !peer_contexts.contains_key(& peer) {
                       let tx = socket_tx.clone();
                       let peer_id = peer;
-                      let fmp4_cache = fmp4_cache.clone();
+                      let chunk_cache = chunk_cache.clone();
                       let peer_shutdown = shutdown_rx.clone();
 
                       let handle = tokio:: spawn(async move {
@@ -102,7 +102,7 @@ pub async fn start(
                           peer_id,
                           id,
                           tx,
-                          fmp4_cache,
+                          chunk_cache,
                           peer_shutdown,
                         ).await;
                       });
@@ -144,7 +144,7 @@ async fn handle_peer_cache(
     peer: PeerId,
     id: u64,
     socket_tx: mpsc::Sender<SocketMessage>,
-    fmp4_cache: Arc<Fmp4Cache>,
+    chunk_cache: Arc<ChunkCache>,
     mut shutdown: watch::Receiver<()>,
 ) {
     let mut muxer = TsMuxer::new();
@@ -156,7 +156,7 @@ async fn handle_peer_cache(
         }
     };
 
-    let mut last = match fmp4_cache.last(id as usize) {
+    let mut last = match chunk_cache.last(id as usize) {
         Some(last) => last,
         None => {
             error!("No last position found for peer {}", peer);
@@ -171,7 +171,7 @@ async fn handle_peer_cache(
             }
                   else => {
               last += 1;
-                      match get_part(fmp4_cache.clone(), id, last).await {
+                      match get_part(chunk_cache.clone(), id, last).await {
                 Some((data, _)) => {
                   if let Err(e) = muxer.write(
                     pid,
@@ -207,13 +207,13 @@ async fn handle_peer_cache(
     info!("Peer cache handler ended for peer {}", peer);
 }
 
-async fn get_part(fmp4_cache: Arc<Fmp4Cache>, path: u64, id: usize) -> Option<(Bytes, u64)> {
+async fn get_part(chunk_cache: Arc<ChunkCache>, path: u64, id: usize) -> Option<(Bytes, u64)> {
     let timeout = Duration::from_secs(3);
     let start_time = Instant::now();
     let poll_interval = Duration::from_millis(1);
 
     while start_time.elapsed() < timeout {
-        if let Some(data) = fmp4_cache.get(path as usize, id).await {
+        if let Some(data) = chunk_cache.get(path as usize, id).await {
             return Some(data.clone());
         }
         sleep(poll_interval).await;
